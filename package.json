@@ -12,6 +12,7 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"dependencies": {
+		"@tanstack/svelte-query": "^4.27.0",
 		"@trpc/client": "^10.18.0",
 		"@trpc/server": "^10.18.0",
 		"superjson": "^1.12.2",
