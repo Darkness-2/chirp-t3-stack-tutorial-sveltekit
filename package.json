@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
+		"postinstall": "prisma generate",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -12,9 +13,11 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"dependencies": {
+		"@prisma/client": "^4.12.0",
 		"@tanstack/svelte-query": "^4.27.0",
 		"@trpc/client": "^10.18.0",
 		"@trpc/server": "^10.18.0",
+		"prisma": "^4.12.0",
 		"superjson": "^1.12.2",
 		"zod": "^3.21.4"
 	},

@@ -1,3 +1,4 @@
+import { prisma } from '$lib/db/db.server';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
@@ -11,7 +12,9 @@ import { ZodError } from 'zod';
  */
 
 export const createTRPCContext = () => {
-	return {};
+	return {
+		prisma
+	};
 };
 
 export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>;
