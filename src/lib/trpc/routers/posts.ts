@@ -1,3 +1,5 @@
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc.server';
 
 export const postsRouter = createTRPCRouter({
@@ -10,5 +12,26 @@ export const postsRouter = createTRPCRouter({
 		});
 
 		return posts;
-	})
+	}),
+
+	getByID: publicProcedure
+		.input(
+			z.object({
+				id: z.string().cuid()
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const post = await ctx.prisma.post.findUnique({
+				where: { id: input.id }
+			});
+
+			if (!post) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Post not found'
+				});
+			}
+
+			return post;
+		})
 });
