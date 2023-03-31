@@ -17,6 +17,7 @@
 		"@tanstack/svelte-query": "^4.27.0",
 		"@trpc/client": "^10.18.0",
 		"@trpc/server": "^10.18.0",
+		"dayjs": "^1.11.7",
 		"prisma": "^4.12.0",
 		"superjson": "^1.12.2",
 		"zod": "^3.21.4"

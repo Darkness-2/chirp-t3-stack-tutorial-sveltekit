@@ -13,5 +13,9 @@
 </script>
 
 <QueryClientProvider client={queryClient}>
-	<slot />
+	<main class="flex h-screen justify-center">
+		<div class="h-full w-full overflow-y-scroll border-x border-slate-400 md:max-w-2xl">
+			<slot />
+		</div>
+	</main>
 </QueryClientProvider>
