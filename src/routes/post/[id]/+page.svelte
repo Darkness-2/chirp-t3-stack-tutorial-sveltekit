@@ -10,7 +10,7 @@
 
 	const postQuery = createQuery({
 		queryKey: ['post', id],
-		queryFn: () => trpc.posts.getByID.query({ id }),
+		queryFn: () => trpc.posts.getById.query({ id }),
 		enabled: false,
 		initialData: data.post
 	});

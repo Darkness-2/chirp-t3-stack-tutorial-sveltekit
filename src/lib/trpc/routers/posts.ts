@@ -14,12 +14,8 @@ export const postsRouter = createTRPCRouter({
 		return posts;
 	}),
 
-	getByID: publicProcedure
-		.input(
-			z.object({
-				id: z.string().cuid()
-			})
-		)
+	getById: publicProcedure
+		.input(z.object({ id: z.string().cuid() }))
 		.query(async ({ ctx, input }) => {
 			const post = await ctx.prisma.post.findUnique({
 				where: { id: input.id }
@@ -33,5 +29,21 @@ export const postsRouter = createTRPCRouter({
 			}
 
 			return post;
+		}),
+
+	getByAuthorId: publicProcedure
+		.input(z.object({ authorId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const posts = await ctx.prisma.post.findMany({
+				where: {
+					authorId: input.authorId
+				},
+				take: 100,
+				orderBy: {
+					createdAt: 'desc'
+				}
+			});
+
+			return posts;
 		})
 });

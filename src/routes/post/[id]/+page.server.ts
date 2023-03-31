@@ -6,7 +6,7 @@ const FIVE_MINUTES_IN_SECONDS = 5 * 60;
 
 export const load: PageServerLoad = async (event) => {
 	const caller = postsRouter.createCaller(createTRPCContext());
-	const post = await caller.getByID({ id: event.params.id });
+	const post = await caller.getById({ id: event.params.id });
 
 	event.setHeaders({
 		'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, must-revalidate`
