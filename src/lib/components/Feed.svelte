@@ -13,7 +13,7 @@
 {#if $postsQuery.isLoading}
 	<LoadingPage />
 {:else if !$postsQuery.data}
-	<div>Something went wront</div>
+	<div>Something went wrong</div>
 {:else}
 	<div class="flex flex-col">
 		{#each $postsQuery.data as fullPost (fullPost.id)}
