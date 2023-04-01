@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error, type Config } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { TRPCError } from '@trpc/server';
 import { ISR_BYPASS_TOKEN } from '$env/static/private';
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	}
 };
 
-export const config = {
+export const config: Config = {
 	isr: {
 		expiration: FIVE_MINUTES_IN_SECONDS,
 		bypassToken: ISR_BYPASS_TOKEN
