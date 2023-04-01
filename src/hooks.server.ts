@@ -69,12 +69,12 @@ const handleTRPC: Handle = async ({ event, resolve }) => {
 							console.error(`❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`);
 					  }
 					: undefined,
-			createContext: () => createTRPCContext()
+			createContext: () => createTRPCContext(event)
 		});
 	}
 
 	// Attach a server-side caller that can be used in server-side load functions
-	event.locals.caller = appRouter.createCaller(createTRPCContext());
+	event.locals.caller = appRouter.createCaller(createTRPCContext(event));
 
 	return await resolve(event);
 };

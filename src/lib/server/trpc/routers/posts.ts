@@ -3,7 +3,8 @@ import { filterUserForClient } from '$lib/helpers/userData';
 import type { Post } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter, privateProcedure, publicProcedure } from '../trpc';
+import { ratelimit } from '$lib/server/upstash/ratelimiter';
 
 const addUserDataToPosts = async (posts: Post[]) => {
 	const usersToGet = new Set(posts.map((post) => post.authorId));
@@ -77,5 +78,32 @@ export const postsRouter = createTRPCRouter({
 			});
 
 			return await addUserDataToPosts(posts);
+		}),
+
+	create: privateProcedure
+		.input(
+			z.object({
+				content: z.string().emoji('Only emojis are allowed').min(1).max(255)
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const authorId = ctx.session.user.id;
+
+			const { success } = await ratelimit.limit(authorId);
+
+			if (!success) {
+				throw new TRPCError({
+					code: 'TOO_MANY_REQUESTS'
+				});
+			}
+
+			const post = await ctx.prisma.post.create({
+				data: {
+					authorId,
+					content: input.content
+				}
+			});
+
+			return post;
 		})
 });

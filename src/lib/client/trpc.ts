@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client';
+import { TRPCClientError, createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 import type { AppRouter } from '../server/trpc/routers/_app';
@@ -57,3 +57,17 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * Example: type HelloOutput = RouterOutputs['example']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
+
+/**
+ * Helper type guard for TRPC client errors. If the error is an instance of
+ * TRPCClientError, it must be from the AppRouter.
+ * See https://github.com/trpc/trpc/discussions/2464
+ */
+
+export const isTRPCClientError = (e: unknown): e is TRPCClientError<AppRouter> => {
+	if (e instanceof TRPCClientError) {
+		return true;
+	}
+
+	return false;
+};

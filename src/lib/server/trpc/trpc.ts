@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/db/db';
-import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
+import type { RequestEvent } from '@sveltejs/kit';
+import { initTRPC, type inferAsyncReturnType, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
@@ -11,8 +12,9 @@ import { ZodError } from 'zod';
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 
-export const createTRPCContext = () => {
+export const createTRPCContext = (event: RequestEvent) => {
 	return {
+		event,
 		prisma
 	};
 };
@@ -63,3 +65,27 @@ export const createTRPCRouter = t.router;
  */
 
 export const publicProcedure = t.procedure;
+
+/**
+ * Private (authenticated) procedure
+ *
+ * This middleware and procedure ensures that the user must have a valid Supabase session.
+ */
+
+const ensureUserIsAuthenticated = t.middleware(async ({ ctx, next }) => {
+	const session = await ctx.event.locals.getSession();
+
+	if (!session) {
+		throw new TRPCError({
+			code: 'UNAUTHORIZED'
+		});
+	}
+
+	return next({
+		ctx: {
+			session
+		}
+	});
+});
+
+export const privateProcedure = t.procedure.use(ensureUserIsAuthenticated);
