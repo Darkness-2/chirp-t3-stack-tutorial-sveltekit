@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	const userId = params.userId;
 
 	try {
-		const user = locals.caller.profile.getUserById({ userId });
+		const user = await locals.caller.profile.getUserById({ userId });
 
 		setHeaders({
 			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, public, must-revalidate`

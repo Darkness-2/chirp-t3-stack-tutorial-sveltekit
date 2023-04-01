@@ -1,10 +1,12 @@
 import { appRouter } from '$lib/server/trpc/routers/_app';
 import { createTRPCContext } from '$lib/server/trpc/trpc';
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import * as SentryNode from '@sentry/node';
+import crypto from 'crypto';
 
 /**
  * This handle function is part of Supabase's recommended approach to autentication.
@@ -80,3 +82,33 @@ const handleTRPC: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(handleSupabase, handleTRPC);
+
+/**
+ * Error handling with Sentry to track errors.
+ * See https://www.youtube.com/watch?v=UJ3JtNIifR8&ab_channel=Huntabyte
+ */
+
+SentryNode.init({
+	dsn: 'https://427b63aaf29c4e7097c4cba19a6a67ac@o4504940896256000.ingest.sentry.io/4504940907003904',
+
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 1.0,
+	environment: process.env.VERCEL_ENV ?? 'development'
+});
+
+export const handleError: HandleServerError = async ({ error, event }) => {
+	const { params, route, url, request, locals, platform } = event;
+	const session = await locals.getSession();
+
+	const errorId = crypto.randomUUID();
+	SentryNode.captureException(error, {
+		contexts: { sveltekit: { params, route, url, request, session, platform, errorId } }
+	});
+
+	return {
+		message: 'An unexpected error occurred.',
+		errorId
+	};
+};
