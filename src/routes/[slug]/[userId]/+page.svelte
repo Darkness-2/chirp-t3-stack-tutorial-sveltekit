@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<title>{user.username}</title>
+	<title>{`@${user.username}`}</title>
 </svelte:head>
 
 <div class="relative h-36 bg-slate-600">

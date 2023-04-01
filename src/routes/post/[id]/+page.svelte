@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>{`${fullPost.post.content} - ${fullPost.author.username}`}</title>
+	<title>{`${fullPost.post.content} - @${fullPost.author.username}`}</title>
 </svelte:head>
 
 <PostView {fullPost} />
