@@ -14,13 +14,13 @@
 
 <div class="flex gap-3 border-b border-slate-400 p-4">
 	<img
-		src={author.avatarUrl}
+		src={author.profileImageUrl}
 		alt={`@${author.username}'s profile picture'`}
 		class="h-14 w-14 rounded-full"
 	/>
 	<div class="flex flex-col">
 		<div class="flex gap-1 text-slate-300">
-			<a href={`/@${author.username}/${author.id}`}>
+			<a href={`/@${author.username}`}>
 				<span>{`@${author.username}`}</span>
 			</a>
 			<a href={`/post/${post.id}`}>

@@ -1,34 +1,33 @@
-import { supabaseAdminClient } from '$lib/server/supabase/supabase';
-import { filterUserForClient } from '$lib/helpers/userData';
-import type { Post } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
+import clerkClient from '@clerk/clerk-sdk-node';
+import type { Post } from '@prisma/client';
+import { filterUserForClient } from '$lib/helpers/userData';
 
 const addUserDataToPosts = async (posts: Post[]) => {
-	const usersToGet = new Set(posts.map((post) => post.authorId));
-
-	const supabaseRequests = [...usersToGet].map((user) =>
-		supabaseAdminClient.auth.admin.getUserById(user)
-	);
-	const users = await Promise.all(supabaseRequests);
+	const users = (
+		await clerkClient.users.getUserList({
+			userId: [...new Set(posts.map((post) => post.authorId))],
+			limit: 100
+		})
+	).map(filterUserForClient);
 
 	return posts.map((post) => {
-		const author = users.find((user) => user.data.user?.id === post.authorId);
+		const author = users.find((user) => user.id === post.authorId);
 
-		if (!author || !author.data.user) {
+		if (!author || !author.username) {
 			throw new TRPCError({
 				code: 'NOT_FOUND',
 				message: 'Author not found'
 			});
 		}
 
-		const filteredAuthor = filterUserForClient(author.data.user);
-
 		return {
 			post,
 			author: {
-				...filteredAuthor
+				...author,
+				username: author.username
 			}
 		};
 	});

@@ -5,13 +5,13 @@ import { TRPCError } from '@trpc/server';
 const FIVE_MINUTES_IN_SECONDS = 5 * 60;
 
 export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
-	const userId = params.userId;
+	const username = params.slug.replace('@', '');
 
 	try {
-		const user = locals.caller.profile.getUserById({ userId });
+		const user = locals.caller.profile.getUserByUsername({ username });
 
 		setHeaders({
-			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, public, must-revalidate`
+			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, must-revalidate`
 		});
 
 		return {

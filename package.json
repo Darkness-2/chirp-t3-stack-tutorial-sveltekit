@@ -14,9 +14,9 @@
 		"prettier:format": "prettier --plugin-search-dir . --write ."
 	},
 	"dependencies": {
+		"@clerk/clerk-js": "^4.35.0",
+		"@clerk/clerk-sdk-node": "^4.8.1",
 		"@prisma/client": "^4.12.0",
-		"@supabase/auth-helpers-sveltekit": "^0.9.0",
-		"@supabase/supabase-js": "^2.13.1",
 		"@tanstack/svelte-query": "^4.27.0",
 		"@trpc/client": "^10.18.0",
 		"@trpc/server": "^10.18.0",

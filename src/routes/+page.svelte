@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { getClerk } from '$lib/client/clerk';
 	import Feed from '$lib/components/Feed.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	$: ({ session, supabase } = data);
+	const signIn = async () => {
+		const clerk = await getClerk();
 
-	const signInWithGithub = async () => {
-		await supabase.auth.signInWithOAuth({
-			provider: 'github',
-			options: {
-				redirectTo: $page.url.href
-			}
-		});
+		await clerk.redirectToSignIn();
 	};
+
+	$: ({ session } = data);
+
+	$: console.log(session);
 </script>
 
 <svelte:head>
@@ -23,9 +22,9 @@
 
 <div class="flex border-b border-slate-400 p-4">
 	{#if !session}
-		<button class="rounded-xl bg-slate-800 p-4 hover:underline" on:click={signInWithGithub}>
-			Sign in with Github
-		</button>
+		<button class="rounded-xl bg-slate-800 p-4 hover:underline" on:click={signIn}
+			>Sign in with Github</button
+		>
 	{/if}
 
 	{#if session}

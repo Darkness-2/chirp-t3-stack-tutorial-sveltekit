@@ -3,40 +3,18 @@ import { createTRPCContext } from '$lib/server/trpc/trpc';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import { authenticateSession } from '$lib/server/auth/clerk';
 
-/**
- * This handle function is part of Supabase's recommended approach to autentication.
- *
- * See https://supabase.com/docs/guides/auth/auth-helpers/sveltekit
- * or https://github.com/supabase/auth-helpers/tree/main/packages/sveltekit
- */
+const handleClerk: Handle = async ({ event, resolve }) => {
+	// Verify session cookie and attach to locals
+	const sessionCookie = event.cookies.get('__session') ?? '';
+	const session = await authenticateSession(sessionCookie);
 
-const handleSupabase: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createSupabaseServerClient({
-		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-		supabaseUrl: PUBLIC_SUPABASE_URL,
-		event
-	});
+	console.log(session);
 
-	/**
-	 * a little helper that is written for convenience so that instead
-	 * of calling `const { data: { session } } = await supabase.auth.getSession()`
-	 * you just call this `await getSession()`
-	 */
-	event.locals.getSession = async () => {
-		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession();
-		return session;
-	};
+	event.locals.session = session;
 
-	return await resolve(event, {
-		filterSerializedResponseHeaders(name) {
-			return name === 'content-range';
-		}
-	});
+	return await resolve(event);
 };
 
 /**
@@ -68,4 +46,4 @@ const handleTRPC: Handle = async ({ event, resolve }) => {
 	return await resolve(event);
 };
 
-export const handle = sequence(handleSupabase, handleTRPC);
+export const handle = sequence(handleClerk, handleTRPC);
