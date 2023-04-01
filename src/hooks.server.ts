@@ -32,11 +32,22 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 		return session;
 	};
 
-	return await resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range';
 		}
 	});
+
+	/**
+	 * Temporary solution to allow caching by removing set-cookie for anything
+	 * with a cache-control header. TBD whether this is a good idea.
+	 */
+
+	if (response.headers.get('cache-control')) {
+		response.headers.delete('set-cookie');
+	}
+
+	return response;
 };
 
 /**
