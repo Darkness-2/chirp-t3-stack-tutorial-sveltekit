@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { TRPCError } from '@trpc/server';
+import { ISR_BYPASS_TOKEN } from '$env/static/private';
 
 const FIVE_MINUTES_IN_SECONDS = 5 * 60;
 
@@ -27,5 +28,12 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 				message: 'Something went wrong'
 			});
 		}
+	}
+};
+
+export const config = {
+	isr: {
+		expiration: FIVE_MINUTES_IN_SECONDS,
+		bypassToken: ISR_BYPASS_TOKEN
 	}
 };
