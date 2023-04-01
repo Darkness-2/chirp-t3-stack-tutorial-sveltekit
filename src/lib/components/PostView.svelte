@@ -20,7 +20,7 @@
 	/>
 	<div class="flex flex-col">
 		<div class="flex gap-1 text-slate-300">
-			<a href={`/${author.username}`}>
+			<a href={`/@${author.username}/${author.id}`}>
 				<span>{`@${author.username}`}</span>
 			</a>
 			<a href={`/post/${post.id}`}>

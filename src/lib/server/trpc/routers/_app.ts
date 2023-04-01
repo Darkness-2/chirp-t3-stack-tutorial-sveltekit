@@ -1,5 +1,6 @@
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter } from '../trpc';
 import { postsRouter } from './posts';
+import { profileRouter } from './profile';
 
 /**
  * This is the primary router for your server.
@@ -7,10 +8,8 @@ import { postsRouter } from './posts';
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-	hello: publicProcedure.query(() => {
-		return 'Hello world';
-	}),
-	posts: postsRouter
+	posts: postsRouter,
+	profile: profileRouter
 });
 
 // Export type definition of API
