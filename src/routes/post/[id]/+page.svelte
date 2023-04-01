@@ -21,7 +21,7 @@
 {:else if !$postQuery.data}
 	<div>404</div>
 {:else}
-	<PostView post={$postQuery.data} />
+	<PostView fullPost={$postQuery.data} />
 {/if}
 
 <svelte:head>

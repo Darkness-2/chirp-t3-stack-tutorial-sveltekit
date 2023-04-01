@@ -16,8 +16,8 @@
 	<div>Something went wrong</div>
 {:else}
 	<div class="flex flex-col">
-		{#each $postsQuery.data as fullPost (fullPost.id)}
-			<PostView post={fullPost} />
+		{#each $postsQuery.data as fullPost (fullPost.post.id)}
+			<PostView {fullPost} />
 		{/each}
 	</div>
 {/if}

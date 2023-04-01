@@ -16,8 +16,6 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 		data: { session }
 	} = await supabase.auth.getSession();
 
-	console.log('Layout shared load ran');
-
 	return {
 		supabase,
 		session
