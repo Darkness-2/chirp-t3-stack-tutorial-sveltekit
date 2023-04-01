@@ -31,6 +31,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Chirp</title>
+</svelte:head>
+
 <QueryClientProvider client={queryClient}>
 	<main class="flex h-screen justify-center">
 		<div class="h-full w-full overflow-y-scroll border-x border-slate-400 md:max-w-2xl">
