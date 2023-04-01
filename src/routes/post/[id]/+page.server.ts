@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders, params }) => {
 		const fullPost = await locals.caller.posts.getById({ id: params.id });
 
 		setHeaders({
-			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, must-revalidate`
+			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, public, must-revalidate`
 		});
 
 		return {
