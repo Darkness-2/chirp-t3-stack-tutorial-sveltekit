@@ -1,4 +1,4 @@
-import { prisma } from '$lib/db/db.server';
+import { prisma } from '$lib/server/db/db';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';

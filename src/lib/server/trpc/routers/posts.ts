@@ -1,9 +1,9 @@
-import { supabaseAdminClient } from '$lib/auth/supabase.server';
+import { supabaseAdminClient } from '$lib/server/supabase/supabase';
 import { filterUserForClient } from '$lib/helpers/userData';
 import type { Post } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '../trpc.server';
+import { createTRPCRouter, publicProcedure } from '../trpc';
 
 const addUserDataToPosts = async (posts: Post[]) => {
 	const usersToGet = new Set(posts.map((post) => post.authorId));

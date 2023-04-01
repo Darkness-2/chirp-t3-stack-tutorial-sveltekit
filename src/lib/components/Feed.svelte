@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { trpc } from '$lib/trpc/trpc.client';
+	import { trpc } from '$lib/client/trpc';
 	import { createQuery } from '@tanstack/svelte-query';
 	import LoadingPage from './LoadingPage.svelte';
 	import PostView from './PostView.svelte';

@@ -2,7 +2,7 @@ import { browser } from '$app/environment';
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
-import type { AppRouter } from './routers/_app.server';
+import type { AppRouter } from '../server/trpc/routers/_app';
 
 /**
  * This is the client-side entrypoint for your tRPC API. It is used to create the `trpc` object which

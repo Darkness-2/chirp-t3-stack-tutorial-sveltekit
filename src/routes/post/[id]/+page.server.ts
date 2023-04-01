@@ -1,23 +1,19 @@
-import { postsRouter } from '$lib/trpc/routers/posts';
-import { createTRPCContext } from '$lib/trpc/trpc.server';
 import { error } from '@sveltejs/kit';
 import { TRPCError } from '@trpc/server';
 import type { PageServerLoad } from './$types';
 
 const FIVE_MINUTES_IN_SECONDS = 5 * 60;
 
-export const load: PageServerLoad = async (event) => {
-	const caller = postsRouter.createCaller(createTRPCContext());
-
+export const load: PageServerLoad = async ({ locals, setHeaders, params }) => {
 	try {
-		const post = await caller.getById({ id: event.params.id });
+		const fullPost = await locals.caller.posts.getById({ id: params.id });
 
-		event.setHeaders({
+		setHeaders({
 			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}, must-revalidate`
 		});
 
 		return {
-			post
+			fullPost
 		};
 	} catch (e) {
 		if (e instanceof TRPCError && e.code === 'NOT_FOUND') {

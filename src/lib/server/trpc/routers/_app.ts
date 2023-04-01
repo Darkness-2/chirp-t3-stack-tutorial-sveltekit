@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from '../trpc.server';
+import { createTRPCRouter, publicProcedure } from '../trpc';
 import { postsRouter } from './posts';
 
 /**

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RouterOutputs } from '$lib/trpc/trpc.client';
+	import type { RouterOutputs } from '$lib/client/trpc';
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
 

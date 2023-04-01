@@ -1,5 +1,5 @@
-import { appRouter } from '$lib/trpc/routers/_app.server';
-import { createTRPCContext } from '$lib/trpc/trpc.server';
+import { appRouter } from '$lib/server/trpc/routers/_app';
+import { createTRPCContext } from '$lib/server/trpc/trpc';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
@@ -45,6 +45,7 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
  *
  * See https://trpc.io/docs/server/adapters/fetch
  */
+
 const handleTRPC: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname.startsWith('/api/trpc')) {
 		return await fetchRequestHandler({
@@ -57,9 +58,12 @@ const handleTRPC: Handle = async ({ event, resolve }) => {
 							console.error(`❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`);
 					  }
 					: undefined,
-			createContext: createTRPCContext
+			createContext: () => createTRPCContext()
 		});
 	}
+
+	// Attach a server-side caller that can be used in server-side load functions
+	event.locals.caller = appRouter.createCaller(createTRPCContext());
 
 	return await resolve(event);
 };
