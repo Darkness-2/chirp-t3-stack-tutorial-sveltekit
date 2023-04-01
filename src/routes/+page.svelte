@@ -17,6 +17,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Chirp</title>
+</svelte:head>
+
 <div class="flex border-b border-slate-400 p-4">
 	{#if !session}
 		<button class="rounded-xl bg-slate-800 p-4 hover:underline" on:click={signInWithGithub}>
