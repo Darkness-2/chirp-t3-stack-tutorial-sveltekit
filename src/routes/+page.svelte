@@ -15,10 +15,6 @@
 			}
 		});
 	};
-
-	const signOut = async () => {
-		await supabase.auth.signOut();
-	};
 </script>
 
 <div class="flex border-b border-slate-400 p-4">
@@ -34,5 +30,3 @@
 </div>
 
 <Feed />
-
-<button class="rounded-xl bg-slate-800 p-4 hover:underline" on:click={signOut}> Sign out </button>
