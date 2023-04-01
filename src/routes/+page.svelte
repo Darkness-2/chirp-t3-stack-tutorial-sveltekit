@@ -8,7 +8,7 @@
 	$: ({ session, supabase } = data);
 
 	const signInWithGithub = async () => {
-		const { data, error } = await supabase.auth.signInWithOAuth({
+		await supabase.auth.signInWithOAuth({
 			provider: 'github',
 			options: {
 				redirectTo: $page.url.href
@@ -17,7 +17,7 @@
 	};
 
 	const signOut = async () => {
-		const { error } = await supabase.auth.signOut();
+		await supabase.auth.signOut();
 	};
 </script>
 
