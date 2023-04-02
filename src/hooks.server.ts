@@ -4,7 +4,11 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import {
+	PUBLIC_SENTRY_DSN,
+	PUBLIC_SUPABASE_ANON_KEY,
+	PUBLIC_SUPABASE_URL
+} from '$env/static/public';
 import * as SentryNode from '@sentry/node';
 import crypto from 'crypto';
 
@@ -89,7 +93,7 @@ export const handle = sequence(handleSupabase, handleTRPC);
  */
 
 SentryNode.init({
-	dsn: 'https://427b63aaf29c4e7097c4cba19a6a67ac@o4504940896256000.ingest.sentry.io/4504940907003904',
+	dsn: PUBLIC_SENTRY_DSN,
 
 	// Set tracesSampleRate to 1.0 to capture 100%
 	// of transactions for performance monitoring.
