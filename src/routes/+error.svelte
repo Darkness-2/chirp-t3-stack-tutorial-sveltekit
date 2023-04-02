@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-
-	console.log($page.error);
 </script>
 
 <div class="flex flex-col p-4">
