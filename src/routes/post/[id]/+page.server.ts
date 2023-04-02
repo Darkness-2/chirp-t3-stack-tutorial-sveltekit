@@ -3,14 +3,14 @@ import { TRPCError } from '@trpc/server';
 import type { PageServerLoad } from './$types';
 import { ISR_BYPASS_TOKEN } from '$env/static/private';
 
-const FIVE_MINUTES_IN_SECONDS = 5 * 60;
+const ONE_HOUR_IN_SECONDS = 60 * 60;
 
 export const load: PageServerLoad = async ({ locals, setHeaders, params }) => {
 	try {
 		const fullPost = await locals.caller.posts.getById({ id: params.id });
 
 		setHeaders({
-			'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}`
+			'cache-control': `max-age=${ONE_HOUR_IN_SECONDS}`
 		});
 
 		return {
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders, params }) => {
 
 export const config: Config = {
 	isr: {
-		expiration: FIVE_MINUTES_IN_SECONDS,
+		expiration: ONE_HOUR_IN_SECONDS,
 		bypassToken: ISR_BYPASS_TOKEN
 	}
 };
