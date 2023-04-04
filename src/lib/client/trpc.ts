@@ -41,7 +41,8 @@ export const trpc = createTRPCProxyClient<AppRouter>({
 			}
 		}),
 		httpBatchLink({
-			url: `${getBaseURL()}/api/trpc`
+			url: `${getBaseURL()}/api/trpc`,
+			maxURLLength: 2083
 		})
 	]
 });
