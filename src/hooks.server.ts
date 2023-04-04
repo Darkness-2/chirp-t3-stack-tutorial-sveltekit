@@ -6,7 +6,7 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import * as SentryNode from '@sentry/node';
 import crypto from 'crypto';
-import { supabaseAdminClient } from '$lib/server/supabase/supabase';
+import { getUser } from '$lib/server/supabase/supabase';
 
 /**
  * This handle function receives the Supabase Auth Token and validates it to get the user.
@@ -18,14 +18,17 @@ import { supabaseAdminClient } from '$lib/server/supabase/supabase';
  */
 
 const handleSupabase: Handle = async ({ event, resolve }) => {
-	// Read custom set cookie to get relevant user
-	const supabaseToken = event.cookies.get('sb-access-token');
-	const {
-		data: { user }
-	} = await supabaseAdminClient.auth.getUser(supabaseToken);
+	// Read custom set cookie to get user credentials
+	const supabaseToken = event.cookies.get('sb-access-token') ?? '';
 
-	// Store user in locals
-	event.locals.user = user;
+	/**
+	 * Store getUser helper function in locals.
+	 *
+	 * Doing it this way allows us to set a helper method in locals that can get the user,
+	 * but ensures we don't have to run this function, which makes a call to Supabase,
+	 * unless we need to.
+	 */
+	event.locals.getUser = async () => await getUser(supabaseToken);
 
 	return await resolve(event);
 };
@@ -78,7 +81,7 @@ SentryNode.init({
 
 export const handleError: HandleServerError = async ({ error, event }) => {
 	const { params, route, url, request, locals, platform } = event;
-	const userId = locals.user?.id;
+	const userId = (await locals.getUser())?.id ?? 'No user';
 
 	const errorId = crypto.randomUUID();
 	SentryNode.captureException(error, {

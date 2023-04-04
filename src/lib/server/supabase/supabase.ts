@@ -8,3 +8,16 @@ export const supabaseAdminClient = createClient(PUBLIC_SUPABASE_URL, SUPABASE_SE
 		persistSession: false
 	}
 });
+
+export const getUser = async (accessToken: string) => {
+	// If there is no access token, no need to even check Supabase
+	if (accessToken === '') {
+		return null;
+	}
+
+	const {
+		data: { user }
+	} = await supabaseAdminClient.auth.getUser(accessToken);
+
+	return user;
+};
