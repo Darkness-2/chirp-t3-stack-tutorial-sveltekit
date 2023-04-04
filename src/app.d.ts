@@ -12,7 +12,7 @@ declare global {
 		}
 		interface Locals {
 			caller: ReturnType<AppRouter['createCaller']>;
-			user: User | null;
+			getUser: () => Promise<User | null>;
 		}
 		// interface PageData {}
 		// interface Platform {}

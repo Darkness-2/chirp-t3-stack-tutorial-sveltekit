@@ -73,7 +73,7 @@ export const publicProcedure = t.procedure;
  */
 
 const ensureUserIsAuthenticated = t.middleware(async ({ ctx, next }) => {
-	const user = ctx.event.locals.user;
+	const user = await ctx.event.locals.getUser();
 
 	if (!user) {
 		throw new TRPCError({
