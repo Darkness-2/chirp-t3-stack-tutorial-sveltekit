@@ -3,57 +3,31 @@ import { createTRPCContext } from '$lib/server/trpc/trpc';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
-import {
-	PUBLIC_SENTRY_DSN,
-	PUBLIC_SUPABASE_ANON_KEY,
-	PUBLIC_SUPABASE_URL
-} from '$env/static/public';
+import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import * as SentryNode from '@sentry/node';
 import crypto from 'crypto';
+import { supabaseAdminClient } from '$lib/server/supabase/supabase';
 
 /**
- * This handle function is part of Supabase's recommended approach to autentication.
+ * This handle function receives the Supabase Auth Token and validates it to get the user.
  *
- * See https://supabase.com/docs/guides/auth/auth-helpers/sveltekit
- * or https://github.com/supabase/auth-helpers/tree/main/packages/sveltekit
+ * Not using the full SvelteKit auth helpers here as we don't need a Supbase instance
+ * specifically for the user. We just need to validate their JWT to get their data.
+ *
+ * See https://github.com/supabase/supabase/issues/147
  */
 
 const handleSupabase: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createSupabaseServerClient({
-		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-		supabaseUrl: PUBLIC_SUPABASE_URL,
-		event
-	});
+	// Read custom set cookie to get relevant user
+	const supabaseToken = event.cookies.get('sb-access-token');
+	const {
+		data: { user }
+	} = await supabaseAdminClient.auth.getUser(supabaseToken);
 
-	/**
-	 * a little helper that is written for convenience so that instead
-	 * of calling `const { data: { session } } = await supabase.auth.getSession()`
-	 * you just call this `await getSession()`
-	 */
-	event.locals.getSession = async () => {
-		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession();
-		return session;
-	};
+	// Store user in locals
+	event.locals.user = user;
 
-	const response = await resolve(event, {
-		filterSerializedResponseHeaders(name) {
-			return name === 'content-range';
-		}
-	});
-
-	/**
-	 * Temporary solution to allow caching by removing set-cookie for anything
-	 * with a cache-control header. TBD whether this is a good idea.
-	 */
-
-	if (response.headers.get('cache-control')) {
-		response.headers.delete('set-cookie');
-	}
-
-	return response;
+	return await resolve(event);
 };
 
 /**
@@ -104,11 +78,11 @@ SentryNode.init({
 
 export const handleError: HandleServerError = async ({ error, event }) => {
 	const { params, route, url, request, locals, platform } = event;
-	const session = await locals.getSession();
+	const userId = locals.user?.id;
 
 	const errorId = crypto.randomUUID();
 	SentryNode.captureException(error, {
-		contexts: { sveltekit: { params, route, url, request, session, platform, errorId } }
+		contexts: { sveltekit: { params, route, url, request, userId, platform, errorId } }
 	});
 
 	return {

@@ -73,9 +73,9 @@ export const publicProcedure = t.procedure;
  */
 
 const ensureUserIsAuthenticated = t.middleware(async ({ ctx, next }) => {
-	const session = await ctx.event.locals.getSession();
+	const user = ctx.event.locals.user;
 
-	if (!session) {
+	if (!user) {
 		throw new TRPCError({
 			code: 'UNAUTHORIZED'
 		});
@@ -83,7 +83,7 @@ const ensureUserIsAuthenticated = t.middleware(async ({ ctx, next }) => {
 
 	return next({
 		ctx: {
-			session
+			user
 		}
 	});
 });

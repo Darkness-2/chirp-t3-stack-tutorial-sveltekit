@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 
 import type { AppRouter } from '$lib/server/trpc/routers/_app';
-import type { Session, SupabaseClient } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 
 // for information about these interfaces
 declare global {
@@ -12,12 +12,9 @@ declare global {
 		}
 		interface Locals {
 			caller: ReturnType<AppRouter['createCaller']>;
-			supabase: SupabaseClient;
-			getSession(): Promise<Session | null>;
+			user: User | null;
 		}
-		interface PageData {
-			session: Session | null;
-		}
+		// interface PageData {}
 		// interface Platform {}
 	}
 }

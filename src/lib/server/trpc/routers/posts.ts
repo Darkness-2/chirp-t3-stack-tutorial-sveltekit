@@ -87,7 +87,7 @@ export const postsRouter = createTRPCRouter({
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
-			const authorId = ctx.session.user.id;
+			const authorId = ctx.user.id;
 
 			const { success } = await ratelimit.limit(authorId);
 
