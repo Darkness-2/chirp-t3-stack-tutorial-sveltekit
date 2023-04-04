@@ -41,6 +41,7 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
  */
 
 const handleTRPC: Handle = async ({ event, resolve }) => {
+	// If URL is a tRPC URL, handle it via the tRPC fetch handler
 	if (event.url.pathname.startsWith('/api/trpc')) {
 		return await fetchRequestHandler({
 			endpoint: '/api/trpc',
