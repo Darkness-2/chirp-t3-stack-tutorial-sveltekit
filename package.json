@@ -23,6 +23,7 @@
 		"@trpc/server": "^10.18.0",
 		"@upstash/ratelimit": "^0.4.1",
 		"@upstash/redis": "^1.20.2",
+		"@vercel/analytics": "^0.1.11",
 		"dayjs": "^1.11.7",
 		"js-cookie": "^3.0.1",
 		"prisma": "^4.12.0",
@@ -32,6 +33,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-vercel": "^2.4.1",
 		"@sveltejs/kit": "^1.5.0",
+		"@total-typescript/ts-reset": "^0.4.2",
 		"@types/js-cookie": "^3.0.3",
 		"@types/node": "^18.15.11",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
