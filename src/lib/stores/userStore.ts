@@ -1,22 +1,39 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createClient, SupabaseClient, type User } from '@supabase/supabase-js';
 import { readable } from 'svelte/store';
+import Cookies, { type CookieAttributes } from 'js-cookie';
+import { browser } from '$app/environment';
 
-const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+/**
+ * User store where the user's Supabase auth status will be stored.
+ * isLoading represents whether the Supabase auth state hook has managed to run yet.
+ * supabase gives access to the Supabase client.
+ * user provides the user object, if logged in.
+ */
+type UserStore =
+	| {
+			isLoading: true;
+			supabase: SupabaseClient;
+			user: null;
+	  }
+	| {
+			isLoading: false;
+			supabase: SupabaseClient;
+			user: User | null;
+	  };
 
 const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
 
-type UserStore = {
-	supabase: SupabaseClient;
-	user: User | null;
-};
-
 export const userStore = readable<UserStore>(
 	{
+		isLoading: true,
 		supabase,
 		user: null
 	},
 	(set) => {
+		// If on server, don't bother running supabase auth hook
+		if (!browser) return;
+
 		/**
 		 * Gets the user's auth status as determined by Supabase.
 		 * Stores or deletes a local cookie based on the event Supabase returns.
@@ -29,16 +46,22 @@ export const userStore = readable<UserStore>(
 			console.log('Supabase Auth state changed:', event);
 
 			if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-				const expires = new Date(0).toUTCString();
-				document.cookie = `sb-access-token=; path=/; expires=${expires}; SameSite=Lax; secure`;
-				document.cookie = `sb-refresh-token=; path=/; expires=${expires}; SameSite=Lax; secure`;
+				Cookies.remove('sb-access-token');
+				Cookies.remove('sb-refresh-token');
 			} else if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-				const maxAge = ONE_DAY_IN_SECONDS;
-				document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
-				document.cookie = `sb-refresh-token=${session.refresh_token}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
+				const cookieSettings: CookieAttributes = {
+					expires: 1,
+					path: '/',
+					sameSite: 'Lax',
+					secure: true
+				};
+
+				Cookies.set('sb-access-token', session.access_token, cookieSettings);
+				Cookies.set('sb-refresh-token', session.refresh_token, cookieSettings);
 			}
 
 			set({
+				isLoading: false,
 				supabase,
 				user: session?.user ?? null
 			});
