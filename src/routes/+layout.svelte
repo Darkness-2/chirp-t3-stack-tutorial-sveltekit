@@ -1,16 +1,9 @@
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { userStore } from '$lib/stores/userStore';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import '../app.css';
-	import { inject } from '@vercel/analytics';
-
-	/**
-	 * Vercel analytics
-	 * See https://vercel.com/docs/frameworks/sveltekit#analytics
-	 */
-	inject({ mode: dev ? 'development' : 'production' });
 
 	const queryClient = new QueryClient({
 		defaultOptions: {

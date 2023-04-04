@@ -23,7 +23,6 @@
 		"@trpc/server": "^10.18.0",
 		"@upstash/ratelimit": "^0.4.1",
 		"@upstash/redis": "^1.20.2",
-		"@vercel/analytics": "^0.1.11",
 		"dayjs": "^1.11.7",
 		"js-cookie": "^3.0.1",
 		"prisma": "^4.12.0",
