@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { isTRPCClientError, trpc } from '$lib/client/trpc';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { githubUserDataSchema } from '$lib/helpers/userData';
+	import { userStore } from '$lib/stores/userStore';
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
 
 	// Extract user Github identity data
-	$: user = githubUserDataSchema.safeParse($page.data.session?.user.user_metadata);
+	$: user = githubUserDataSchema.safeParse($userStore.user?.user_metadata);
 
 	const queryClient = useQueryClient();
 	let postContent = '';
