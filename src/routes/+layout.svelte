@@ -4,17 +4,6 @@
 	import { userStore } from '$lib/stores/userStore';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import '../app.css';
-	import type { LayoutData } from './$types';
-
-	export let data: LayoutData;
-
-	// Store server-side user into the store
-	userStore.update((value) => {
-		return {
-			...value,
-			user: data.user
-		};
-	});
 
 	const queryClient = new QueryClient({
 		defaultOptions: {

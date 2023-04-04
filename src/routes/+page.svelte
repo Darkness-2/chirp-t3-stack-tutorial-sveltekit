@@ -4,8 +4,6 @@
 	import Feed from '$lib/components/Feed.svelte';
 	import { userStore } from '$lib/stores/userStore';
 
-	console.log('Page rendered');
-
 	const signInWithGithub = async () => {
 		await $userStore.supabase.auth.signInWithOAuth({
 			provider: 'github',

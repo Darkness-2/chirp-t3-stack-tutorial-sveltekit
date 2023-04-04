@@ -1,6 +1,6 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createClient, SupabaseClient, type User } from '@supabase/supabase-js';
-import { writable } from 'svelte/store';
+import { readable } from 'svelte/store';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -11,7 +11,7 @@ type UserStore = {
 	user: User | null;
 };
 
-export const userStore = writable<UserStore>(
+export const userStore = readable<UserStore>(
 	{
 		supabase,
 		user: null
