@@ -38,13 +38,14 @@ The stack used for this project is mostly the same as in the original Chirp exam
 
 - [SvelteKit](https://kit.svelte.dev/)
 - [Vercel](https://vercel.com/)
+  - [Recommended caching options](https://vercel.com/docs/concepts/functions/serverless-functions/edge-caching#recommended-cache-control)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 - [Tanstack Query](https://tanstack.com/query/v4/docs/svelte/overview) for client-side data fetching
 - [Zod](https://zod.dev/) for validation
-- [Supabase Auth](https://supabase.com/docs/guides/auth/auth-helpers/sveltekit) [(see note)](#using-supabase-auth)
-  - Specifically the SvelteKit auth helpers
+- [Supabase Auth](https://supabase.com/docs/guides/auth/) [(see note)](#using-supabase-auth)
+  - NOT using the SvelteKit Auth Helpers
 - [Upstash](https://upstash.com/) for rate limiting
 - [Sentry](https://sentry.io/) for error tracking
 
@@ -76,8 +77,11 @@ I originally tried implementing this project with [Clerk auth](https://clerk.com
 
 Key differences I found with using Supabase:
 
+- The SvelteKit Auth Helpers are designed to initiate a Supabase client specific to each user on the server; for this stack that isn't needed as we're only using Supabase for auth, not for data
+  - Specifically, using these auth helpers expose tons of sensitive user data in the `+layout.ts` and `+layout.server.ts` load functions, which means the entire site becomes uncachable
+  - Instead, I have implemented client-side auth, where a `sb-access-token` is sent to the server which can perform validation of the user, but does not change the user's auth state
+  - This has been largely based on their [SSR auth docs](https://supabase.com/docs/guides/auth/server-side-rendering)
 - The [Supabase Admin API](https://supabase.com/docs/reference/javascript/admin-api) seems less designed to query user data than Clerk (for example, there is no `getUserList` equivalent)
   - As Supabase doesn't have a way to query users by username, I had to use userIds as the slug for the profile page
 - Supabase also doesn't provide as easy access to provider data, like the user's Github profile picture and username as Clerk does
   - To get around this, I built a Zod validator that adds type safety for Github user data available under Supabase's `user_metadata` object (see `/src/lib/helpers/userData.ts`)
-- The Supabase server-side auth helpers seem to set a cookie on every response back from the server, even if the auth state hasn't changed; I had to remove the `set-cookie` header for responses I wanted to be cached by Vercel, as otherwise that would leak user session tokens
