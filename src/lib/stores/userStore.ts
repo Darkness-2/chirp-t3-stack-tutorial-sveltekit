@@ -1,5 +1,5 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
-import { createClient, SupabaseClient, type User } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js';
 import { readable } from 'svelte/store';
 import Cookies, { type CookieAttributes } from 'js-cookie';
 import { browser } from '$app/environment';
