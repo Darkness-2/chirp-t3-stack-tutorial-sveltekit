@@ -2,7 +2,6 @@ import { appRouter } from '$lib/server/trpc/routers/_app';
 import { createTRPCContext } from '$lib/server/trpc/trpc';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import * as SentryNode from '@sentry/node';
 import crypto from 'crypto';
@@ -34,32 +33,13 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 };
 
 /**
- * This handle function intercepts requests to /api/trpc and passes them to the tRPC
- * fetch request handler.
+ * This handle function attaches a server-side caller for the tRPC router
+ * to locals, allowing us to call tRPC functions on the server.
  *
- * See https://trpc.io/docs/server/adapters/fetch
+ * See https://trpc.io/docs/server/server-side-calls
  */
-
 const handleTRPC: Handle = async ({ event, resolve }) => {
-	// If URL is a tRPC URL, handle it via the tRPC fetch handler
-	if (event.url.pathname.startsWith('/api/trpc')) {
-		return await fetchRequestHandler({
-			endpoint: '/api/trpc',
-			req: event.request,
-			router: appRouter,
-			onError:
-				process.env.NODE_ENV === 'development'
-					? ({ path, error }) => {
-							console.error(`❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`);
-					  }
-					: undefined,
-			createContext: () => createTRPCContext(event)
-		});
-	}
-
-	// Attach a server-side caller that can be used in server-side load functions
 	event.locals.caller = appRouter.createCaller(createTRPCContext(event));
-
 	return await resolve(event);
 };
 
