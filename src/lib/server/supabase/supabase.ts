@@ -9,6 +9,9 @@ export const supabaseAdminClient = createClient(PUBLIC_SUPABASE_URL, SUPABASE_SE
 	}
 });
 
+/**
+ * Server-side helper function to get user based on their access token.
+ */
 export const getUser = async (accessToken: string) => {
 	// If there is no access token, no need to even check Supabase
 	if (accessToken === '') {
