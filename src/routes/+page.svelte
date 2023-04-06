@@ -2,10 +2,12 @@
 	import { page } from '$app/stores';
 	import CreatePostWizard from '$lib/components/CreatePostWizard.svelte';
 	import Feed from '$lib/components/Feed.svelte';
-	import { userStore } from '$lib/stores/userStore';
+	import { getUserStore } from '$lib/stores/userStore';
+
+	const userStore = getUserStore();
 
 	const signInWithGithub = async () => {
-		await $userStore.supabase.auth.signInWithOAuth({
+		await $userStore.supabase?.auth.signInWithOAuth({
 			provider: 'github',
 			options: {
 				redirectTo: $page.url.href

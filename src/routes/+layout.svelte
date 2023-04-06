@@ -1,9 +1,18 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { userStore } from '$lib/stores/userStore';
+	import { createUserStore } from '$lib/stores/userStore';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import '../app.css';
+	import { setContext } from 'svelte';
+
+	/**
+	 * Create the userStore and attach it to a context.
+	 * Ensures stores are unique per request.
+	 * See https://kit.svelte.dev/docs/state-management#using-stores-with-context
+	 */
+	const userStore = createUserStore();
+	setContext('userStore', userStore);
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -14,7 +23,7 @@
 	});
 
 	const signOut = async () => {
-		await $userStore.supabase.auth.signOut();
+		await $userStore.supabase?.auth.signOut();
 	};
 </script>
 

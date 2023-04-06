@@ -2,8 +2,10 @@
 	import { isTRPCClientError, trpc } from '$lib/client/trpc';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { githubUserDataSchema } from '$lib/helpers/userData';
-	import { userStore } from '$lib/stores/userStore';
+	import { getUserStore } from '$lib/stores/userStore';
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
+
+	const userStore = getUserStore();
 
 	// Extract user Github identity data
 	$: user = githubUserDataSchema.safeParse($userStore.user?.user_metadata);
